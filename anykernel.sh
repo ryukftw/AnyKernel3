@@ -4,42 +4,41 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=Illusion by Akhil
+kernel.string=Kraken by Ryuk
 do.devicecheck=1
 do.modules=0
 do.systemless=1
 do.cleanup=1
 do.cleanuponabort=0
-device.name1=beryllium
-device.name2=PocoF1
-device.name3=
+device.name1=RMX3371
+device.name2=RE54E4L1
+device.name3=spartan
 device.name4=
 device.name5=
-supported.versions=
+supported.versions=13-14
 supported.patchlevels=
 '; } # end properties
 
-# shell variables
+### AnyKernel install
+# begin attributes
+attributes() {
+set_perm_recursive 0 0 755 644 $ramdisk/*;
+set_perm_recursive 0 0 750 750 $ramdisk/init* $ramdisk/sbin;
+} # end attributes
+
+
+## boot shell variables
 block=/dev/block/bootdevice/by-name/boot;
-is_slot_device=0;
+is_slot_device=auto;
 ramdisk_compression=auto;
+patch_vbmeta_flag=auto;
 
+# import functions/variables and setup patching - see for reference (DO NOT REMOVE)
+. tools/ak3-core.sh && attributes;
 
-## AnyKernel methods (DO NOT CHANGE)
-# import patching functions/variables - see for reference
-. tools/ak3-core.sh;
+# boot install
+dump_boot; # use split_boot to skip ramdisk unpack, e.g. for devices with init_boot ramdisk
 
-# Display if using MIUI or a custom ROM
-is_miui="$(file_getprop /system/build.prop 'ro.miui.ui.version.code')"
-if [[ -z $is_miui ]]; then
-    ui_print "You are running a custom ROM!"
-else
-    ui_print "You are running MIUI!"
-fi
-
-## AnyKernel install
-dump_boot;
+vbmeta_disable_verification;
 
 write_boot;
-## end install
-
